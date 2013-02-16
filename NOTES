@@ -1,0 +1,102 @@
+
+* PHILOSOPHY
+
+Everything gi *does* is compatible with git.
+
+But it will be pedagogically simple and conceptually clear.
+
+* FOR EXAMPLE
+
+Maybe "git commit file" is convenient.
+But it's complex and philosophically confusing.
+So we aren't going to do it.
+"gi commit" commits THE INDEX.
+If you want "git commit file", you know where to find it.
+
+Similarly, "gi commit" is forbidden when the HEAD is detached.
+Sometimes it's useful to commit when the HEAD is detached.
+If you want to do that, you can use git-commit.
+
+* BASIC CONCEPTS THAT WE EMPHASIZE
+
+HEAD
+  head ref
+  head commit
+The index
+  We commit THE INDEX.
+  We DO NOT commit "changes".
+  We DO NOT commit "a file".
+
+* Stuff that confuses beginners:
+
+** Detached head
+
+We'll fix this with explicit gi-detach and gi-attach commands.
+Instead there's some suite for copying a commit to the index, for
+copying the index to the working tree, and gi-go for moving HEAD to a
+new commit.
+
+There is always a headref unless you *explicitly* use gi-detach.
+
+** Rejected PUSH
+
+I think git has this right. Beginners will have to deal with it.
+
+* COMMANDS
+
+** gi-attach <ref>
+
+Attach HEAD to some other ref:
+
+       HEAD now attached to <ref>
+
+The commit pointed to by the old headref doesn't change.
+
+If HEAD was detached, it is attached, that's OK.
+
+** gi-detach
+
+Basically git-checkout HEAD~0.  Message is "HEAD detached" or "HEAD
+was already detached".
+
+** gi-branch <name>
+
+Make a new ref at the current head commit.
+
+-a flag attaches to the new ref.
+
+** gi-commit 
+
+Commits the index and moves the 
+
+Forbidden when in a detached HEAD state.
+
+** gi-move <ref> <commit-ish>
+
+Moves an existing ref to a new commit.  Work could be lost.  Dangerous?
+If you do supply this, have it leave behind OLDLOC or something.
+
+** gi-checkout <ref>
+
+Attaches the HEAD to the specified ref.
+Then copy the head commit to the index, then to the working directory.
+
+Forbidden if the index or working tree are dirty.
+
+** gi-add <paths>...
+
+Copies files from the working tree to the index, like git-add.  We
+support -u also.
+
+** gi-discard-changes
+
+Discards working tree changes: copies the index to the working tree.
+
+(Optional files: copy only those files?)
+
+** gi-reset-index
+
+Discards index changes: copies the head commit to the index.
+
+(Optional files: copy only those files?)
+
