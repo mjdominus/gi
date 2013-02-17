@@ -22,10 +22,15 @@ If you want to do that, you can use git-commit.
 HEAD
   head ref
   head commit
+
 The index
   We commit THE INDEX.
   We DO NOT commit "changes".
   We DO NOT commit "a file".
+
+Branches
+  A branch is a named commit plus all its ancetor commits.
+  Thus some branches contain others.
 
 * Stuff that confuses beginners:
 
@@ -44,7 +49,7 @@ I think git has this right. Beginners will have to deal with it.
 
 * COMMANDS
 
-** gi-attach <ref>
+** gi-go <ref>
 
 Attach HEAD to some other ref:
 
@@ -99,4 +104,59 @@ Discards working tree changes: copies the index to the working tree.
 Discards index changes: copies the head commit to the index.
 
 (Optional files: copy only those files?)
+
+** git commands that we will pass through to gi
+
+    gi-cherry-pick
+    gi-rebase
+    gi-rebase--interactive
+    gi-status
+    gi-status--short
+
+    gi-merge
+    gi-diff
+    gi-grep
+    gi-log
+
+    Most of the remote repo commands:
+    gi-fetch
+    gi-push
+    gi-clone
+
+** git commands I'm still thinking about
+
+    git-branch
+
+    git-mv
+    git-rm
+
+    git-show
+
+      The idea is sound, but I think we can do better here.  But isn't
+      99% of the usecase to just do git-log -1?  If so, git-show is
+      probably okay.
+
+** Totally new commands
+
+*** Something to display the topology of the commit history without
+    the details.  It elides sequences of commits that are straight lines.
+
+** git commands we don't need to pass through to gi
+
+    gi-tag    
+      Advanced users only.
+
+** git commands that we will NOT pass through to gi
+
+    git-reset  (what a fucking mess)
+      Instead we have gi-discard-changes, gi-reset-index, and gi-go.
+
+    git-push
+      Use gi-fetch plus gi-merge
+
+    git-init
+      Emphasizes that gi is not a different thing than git, but that
+      gi is a different way to manipulate *git* repositories.  To make
+      a repo, you use git-init, because you are making a *git* repo,
+      not some different thing that is called a gi repo.
 
