@@ -126,7 +126,6 @@ Discards index changes: copies the head commit to the index.
 
     Most of the remote repo commands:
     gi-fetch
-    gi-push
     gi-clone
 
 ** git commands where we should change the interface or the options or something
@@ -143,6 +142,25 @@ It's hard to guess which two things will be compared.  Try to rationalize the ar
                                          probably not; if they want
                                          that they can make an alias.
                                          Do not multiply entities.)
+
+
+*** gi-push
+
+I found the distinction between the ref and the remote name confusing.
+We can probably clean up the interface here.  Also get a better syntax
+for things like "localref:remoteref".  Maybe the remote is *always*
+assumed to be 'origin' unless you use a '--remote=foo' option or
+something.
+
+*** gi-fetch
+
+The difference between 'git-fetch', 'git-fetch remote', 'git-fetch
+remote branch', and maybe 'git-fetch branch' is confusing.  What's the
+common case here?  What's the thing that beginners most need to do?
+My own common case is probably 'git-push origin HEAD'.  Maybe do that.
+
+Whatever you do about the remote for gi-push, do the same thing here
+too.
 
 ** git commands I'm still thinking about
 
@@ -200,7 +218,8 @@ it makes clear that gi-reset-index is the opposite of gi-index.
       Instead we have gi-discard-changes, gi-reset-index, and gi-go.
 
     git-pull
-      Use gi-fetch plus gi-merge
+      Use gi-fetch plus gi-merge.  Have a gi-pull comand that prints
+      out a message that tells you to do that.
 
     git-init
       Emphasizes that gi is not a different thing than git, but that
