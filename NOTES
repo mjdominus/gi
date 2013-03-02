@@ -28,8 +28,16 @@ The index
   We DO NOT commit "changes".
   We DO NOT commit "a file".
 
+  The terminology here is a mess:
+
+  Do not refer to the index as "the stage" or "the cache".
+  Do not refer to indexed changes as "staged" or "cached"?
+  Or if you do, pick one and stick with it!
+    Don't say "the staged changes" unless you have recently used the longer form
+    "The changes staged in the index".
+
 Branches
-  A branch is a named commit plus all its ancetor commits.
+  A branch is a named commit plus all its ancestor commits.
   Thus some branches contain others.
 
 * Stuff that confuses beginners:
@@ -45,7 +53,11 @@ There is always a headref unless you *explicitly* use gi-detach.
 
 ** Rejected PUSH
 
-I think git has this right. Beginners will have to deal with it.
+I think this is unavoidable complexity and that git's treatment of
+this is correct. Beginners will have to deal with it.  But think about
+it anyway; maybe there's some way we can clean it up.
+
+Maybe something to offer helpful advice about what to do.
 
 * COMMANDS
 
@@ -88,11 +100,6 @@ Then copy the head commit to the index, then to the working directory.
 
 Forbidden if the index or working tree are dirty.
 
-** gi-add <paths>...
-
-Copies files from the working tree to the index, like git-add.  We
-support -u also.
-
 ** gi-discard-changes
 
 Discards working tree changes: copies the index to the working tree.
@@ -105,7 +112,7 @@ Discards index changes: copies the head commit to the index.
 
 (Optional files: copy only those files?)
 
-** git commands that we will pass through to gi
+** git commands that we will pass through to gi unchanged
 
     gi-cherry-pick
     gi-rebase
@@ -114,7 +121,6 @@ Discards index changes: copies the head commit to the index.
     gi-status--short
 
     gi-merge
-    gi-diff
     gi-grep
     gi-log
 
@@ -123,35 +129,77 @@ Discards index changes: copies the head commit to the index.
     gi-push
     gi-clone
 
+** git commands where we should change the interface or the options or something
+
+*** gi-diff
+
+It's hard to guess which two things will be compared.  Try to rationalize the argmuents:
+
+     gi diff commitish-A commitish-B
+     gi diff             commitish-B    (commitish-A is taken to be HEAD)
+     gi diff INDEX                      ("INDEX" is treated specially)
+
+     gi ix                              (Synonym for 'gi diff INDEX'? 
+                                         probably not; if they want
+                                         that they can make an alias.
+                                         Do not multiply entities.)
+
 ** git commands I'm still thinking about
 
-    git-branch
+*** git-branch
 
-    git-mv
-    git-rm
+-m is confusing. It looks like it moves branches, but it moves refs.
+Maybe call it gi-move-ref or something.  This is a basic command that
+git lacks; the interface on git-update-ref is horrendous.
 
-    git-show
+*** git-mv
 
-      The idea is sound, but I think we can do better here.  But isn't
-      99% of the usecase to just do git-log -1?  If so, git-show is
-      probably okay.
+*** git-rm
+
+*** git-show
+
+The idea is sound, but I think we can do better here.  But isn't 99%
+of the use-case to just do git-log -1?  If so, git-show is probably
+okay.
+
+*** git-status
+
+The long output from git-status is helpful to a lot of people.  But I
+think the output format could be made simpler or more useful or
+something.
+
+I wonder if gi should provide gi-s as an alias for git-status -s?
+
+** gi-add <paths>...
+
+Copies files from the working tree to the index, like git-add.  We
+support -u also.
+
+Beginners are confused by this.  Separate gi-add, for adding *new*
+files, from gi-stage, for copying changes to the index.  Does gi-add
+imply gi-stage, or is it like git-add -N?  Probably avoid git-add -N
+since it's still a little bit weird and unfinished.
+
+Calling this "gi-stage" violates the commandment above about confusing
+index/stage/cache terminology.  Maybe gi-index instead?  I like this;
+it makes clear that gi-reset-index is the opposite of gi-index.
 
 ** Totally new commands
 
 *** Something to display the topology of the commit history without
     the details.  It elides sequences of commits that are straight lines.
 
-** git commands we don't need to pass through to gi
+*** gi-whatnext
 
-    gi-tag    
-      Advanced users only.
+    Suggestion for what to do next?  If the index is conflicted,
+    suggest gi-reset-index or editing the files followed by gi-index.
 
 ** git commands that we will NOT pass through to gi
 
     git-reset  (what a fucking mess)
       Instead we have gi-discard-changes, gi-reset-index, and gi-go.
 
-    git-push
+    git-pull
       Use gi-fetch plus gi-merge
 
     git-init
@@ -159,4 +207,7 @@ Discards index changes: copies the head commit to the index.
       gi is a different way to manipulate *git* repositories.  To make
       a repo, you use git-init, because you are making a *git* repo,
       not some different thing that is called a gi repo.
+
+    git-tag
+      Advanced users only.
 
