@@ -204,6 +204,8 @@ it makes clear that gi-reset-index is the opposite of gi-index.
 
 ** Totally new commands
 
+All of these are firmly in the "maybe, maybe not" file.
+
 *** Something to display the topology of the commit history without
     the details.  It elides sequences of commits that are straight lines.
 
@@ -211,6 +213,10 @@ it makes clear that gi-reset-index is the opposite of gi-index.
 
     Suggestion for what to do next?  If the index is conflicted,
     suggest gi-reset-index or editing the files followed by gi-index.
+
+*** gi-fixup
+
+    git commit --amend -C HEAD
 
 ** git commands that we will NOT pass through to gi
 
