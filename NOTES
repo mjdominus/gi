@@ -76,6 +76,8 @@ If HEAD was detached, it is attached, that's OK.
 Basically git-checkout HEAD~0.  Message is "HEAD detached" or "HEAD
 was already detached".
 
+Need some warning here about possible lost commits.
+
 ** gi-branch <name>
 
 Make a new ref at the current head commit.
@@ -152,6 +154,19 @@ for things like "localref:remoteref".  Maybe the remote is *always*
 assumed to be 'origin' unless you use a '--remote=foo' option or
 something.
 
+Major terminology problem: Git does not have a clear, simple piece of
+jargon for distinguishing between:
+
+    1. The ref `foo` in the remote repo
+    2. The ref `remote/foo` in the local repo
+    3. The ref `foo` in the local repo
+
+These are all related but different.  To understand `git-fetch` and
+`git-push` you have to understand that there are three entities here.
+But there's not way to talk about them because they don't have names!
+But we want to say that `git-fetch` copies 1 to 2, and `git-push`
+copies 3 to 1 _and_ to 2.
+
 *** gi-fetch
 
 The difference between 'git-fetch', 'git-fetch remote', 'git-fetch
@@ -161,6 +176,15 @@ My own common case is probably 'git-push origin HEAD'.  Maybe do that.
 
 Whatever you do about the remote for gi-push, do the same thing here
 too.
+
+** gi-wtf
+
+Print a more detailed explanation of the previous error/warning.
+
+Do it journalist style: Most important paragraph first. If
+there's more to say, end with “OK to stop here, or use `gi wtf`
+again to continue.  Last paragraph is always ,“For complete
+details, see `http://git-wtf.org/gi/blah`”.
 
 ** git commands I'm still thinking about
 
@@ -188,7 +212,7 @@ something.
 
 I wonder if gi should provide gi-s as an alias for git-status -s?
 
-** gi-add <paths>...
+*** gi-add <paths>...
 
 Copies files from the working tree to the index, like git-add.  We
 support -u also.
@@ -214,6 +238,20 @@ All of these are firmly in the "maybe, maybe not" file.
     Suggestion for what to do next?  If the index is conflicted,
     suggest gi-reset-index or editing the files followed by gi-index.
 
+    Samer Masterson suggests: “reminds me of vc-next-action, which
+    simply does the next thing instead of asking”.  Look into this.
+
+*** gi-undo
+
+    Each gi command can write a history file that includes a command
+    that will perfectly roll back its changes.  `gi-undo` can execute
+    the rollback.  This would also allow `gi-history` which describes
+    just your `gi` commands without all the intervening `ls`es and
+    such.
+
+    Potential difficulty: Changing working directory and other
+    environmental changes.
+
 *** gi-fixup
 
     git commit --amend -C HEAD
@@ -223,9 +261,9 @@ All of these are firmly in the "maybe, maybe not" file.
     git-reset  (what a fucking mess)
       Instead we have gi-discard-changes, gi-reset-index, and gi-go.
 
-    git-pull
-      Use gi-fetch plus gi-merge.  Have a gi-pull comand that prints
-      out a message that tells you to do that.
+    git-pull Use gi-fetch plus gi-merge.  Have a gi-pull comand that
+      prints out a message that tells you to do that. (“Sorry, the
+      opposite of `push` is unfortunately `fetch`.”)
 
     git-init
       Emphasizes that gi is not a different thing than git, but that
@@ -235,4 +273,15 @@ All of these are firmly in the "maybe, maybe not" file.
 
     git-tag
       Advanced users only.
+
+* Other features:
+
+    gi mode explain-git-commands
+
+      After each gi command, gi will explain which _Git_ commands it
+      was using to do the same thing.
+
+      Are there other kinds of mode settings
+
+
 
