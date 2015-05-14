@@ -84,9 +84,9 @@ Make a new ref at the current head commit.
 
 -a flag attaches to the new ref.
 
-** gi-commit 
+** gi-commit
 
-Commits the index and moves the 
+Commits the index and moves the
 
 Forbidden when in a detached HEAD state.
 
@@ -117,8 +117,6 @@ Discards index changes: copies the head commit to the index.
 ** git commands that we will pass through to gi unchanged
 
     gi-cherry-pick
-    gi-rebase
-    gi-rebase--interactive
     gi-status
     gi-status--short
 
@@ -140,7 +138,7 @@ It's hard to guess which two things will be compared.  Try to rationalize the ar
      gi diff             commitish-B    (commitish-A is taken to be HEAD)
      gi diff INDEX                      ("INDEX" is treated specially)
 
-     gi ix                              (Synonym for 'gi diff INDEX'? 
+     gi ix                              (Synonym for 'gi diff INDEX'?
                                          probably not; if they want
                                          that they can make an alias.
                                          Do not multiply entities.)
@@ -177,14 +175,96 @@ My own common case is probably 'git-push origin HEAD'.  Maybe do that.
 Whatever you do about the remote for gi-push, do the same thing here
 too.
 
-** gi-wtf
+*** gi-rebase
 
-Print a more detailed explanation of the previous error/warning.
+There are at least two problems with rebase.  One is that it
+inevitably leads to conflicted pushes.  I don't think that can be
+fixed, and I don't think it can be hidden. As discussed above, it must
+be faced head-on.
 
-Do it journalist style: Most important paragraph first. If
-there's more to say, end with “OK to stop here, or use `gi wtf`
-again to continue.  Last paragraph is always ,“For complete
-details, see `http://git-wtf.org/gi/blah`”.
+Another problem is that it seems like a scary headfirst dive into
+something complex.  We can mitigate this in a couple of ways.
+
+1. gi-copy-branch
+
+This differs from rebase in two ways.  Suppose you have `topic` checked out.
+`git-rebase target` does the following:
+
+    1. check out the `target` commit (not `target` itself)
+    2. cherry-pick commits from the merge-base up to `topic`, stopping to resolve conflicts
+    3. if the cherry-picks are successful, move the `topic` ref to the end of the new branch
+    3. check out `topic`.
+
+If successful, it's not clear what happened to the original branch.
+Experienced git users can undo this easily with `git reset --hard
+ORIG_HEAD` or by using the reflog, but beginners are at sea.  Also,
+the jargon is worrisome.  "Rebase"?  What's that?
+
+Instead, we can provide `gi-copy-branch`.  In the same case,
+`gi-copy-branch target` does the following:
+
+    1. check out the `target` commit  (exactly the same)
+    2. cherry-pick commits the same, but if there is a merge conflict, abort the whole thing
+    3. if all the cherry-picks succeed, create a new `topic-copy` ref at the end of the new branch
+    4. check out `topic` as before
+
+End result: you are in exactly the same place, `topic`, which has not
+changed.  But you either got an error message (some elaboration of
+"couldn't copy all the commits") or else the only new thing is there
+is now a new branch, `topic-copy`, on the end of `target`, which you
+can check out or examine as usual.  If you decide you don't like it,
+you can use `gi-delete-ref topic-copy` to get rid of it.  (Note,
+delete *ref*, not delete *branch*.  The _branch_ includes all the
+commits back to the initial commit, including everything on `target`.)
+
+(Instead of the `gi-checkout` and `gi-delete-ref` maybe a separate
+command: `gi-abandon-original-branch` or something, that moves `topic`
+to `topic-copy` and deletes the `topic-copy` ref. Find a better name
+for this.)
+
+There can be an option to allow merge resolution instead of instant failure.
+
+The error message can describe the commits that failed, if there were
+any, and mention the merge resolution option.
+
+2. gi-reorder-commits
+
+Like interactive rebase, but instead of commands, you just get a list
+of commits, and edit them into order, they are then rebased into the
+requested order.  Unless you provide the expert-level option, a failed
+cherry-pick aborts the whole thing.
+
+What are the arguments to this?  Maybe `--back-to commitish` or `-n 6`
+to reorder the last 6?  Maybe `--from commitish-A --to commitish-B`?
+No, that's no good, because we can't truly support `--to`.
+
+Maybe the result should still be in `foo-copy` and you use
+`gi-abandon-original-branch` as with gi-copy-branch.
+
+3. gi-combine-commits
+
+(Or maybe `squash-commits`.  Do _not_ call it `merge-commits`.)
+
+Like `git-rebase`'s squash option.  What is the UI?  Maybe you can just say
+
+      git combine-commits c1 c2 c3 ... cn
+
+and it does a combined reorder plus squash, invokes the editor once
+with the combined commit messages from c1...cn, and leaves everything
+else in order?  For example if you have commits 1 2 3 4 5 6 7 and you
+do `gi combine-commits 2 4 5` then you end up with 1 245 3 6 7.
+
+As usual, a failed merge aborts the whole thing unless you give the special option.
+
+Same thing as above about `gi-abandon-original-branch`.
+
+4. gi-amend
+
+This is just a wrapper around `git commit --amend`.  Replaces the head
+commit with the current index.  Maybe instead of moving the headref,
+it creates headref`-emanded` so you can compare?  This can't fail, but
+it could support the `gi-abandon-original-branch` semantics if we
+wanted.  It can also easily support an undo.
 
 ** git commands I'm still thinking about
 
@@ -233,12 +313,21 @@ All of these are firmly in the "maybe, maybe not" file.
 *** Something to display the topology of the commit history without
     the details.  It elides sequences of commits that are straight lines.
 
+*** gi-wtf
+
+    Print a more detailed explanation of the previous error/warning.
+
+    Do it journalist style: Most important paragraph first. If
+    there's more to say, end with “OK to stop here, or use `gi wtf`
+    again to continue.  Last paragraph is always ,“For complete
+    details, see `http://gi-wtf.org/gi/blah`”.
+
 *** gi-whatnext
 
     Suggestion for what to do next?  If the index is conflicted,
-    suggest gi-reset-index or editing the files followed by gi-index.
+    suggest `gi-reset-index` or editing the files followed by `gi-index`.
 
-    Samer Masterson suggests: “reminds me of vc-next-action, which
+    Samer Masterson suggests: “reminds me of (Emacs) `vc-next-action`, which
     simply does the next thing instead of asking”.  Look into this.
 
 *** gi-undo
@@ -250,11 +339,8 @@ All of these are firmly in the "maybe, maybe not" file.
     such.
 
     Potential difficulty: Changing working directory and other
-    environmental changes.
-
-*** gi-fixup
-
-    git commit --amend -C HEAD
+    environmental changes.  Maybe it's as simple as having each undo
+    command start with `cd Whatever-cwd`.
 
 ** git commands that we will NOT pass through to gi
 
