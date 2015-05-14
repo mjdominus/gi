@@ -193,7 +193,7 @@ This differs from rebase in two ways.  Suppose you have `topic` checked out.
     1. check out the `target` commit (not `target` itself)
     2. cherry-pick commits from the merge-base up to `topic`, stopping to resolve conflicts
     3. if the cherry-picks are successful, move the `topic` ref to the end of the new branch
-    3. check out `topic`.
+    4. check out `topic`.
 
 If successful, it's not clear what happened to the original branch.
 Experienced git users can undo this easily with `git reset --hard
@@ -206,7 +206,7 @@ Instead, we can provide `gi-copy-branch`.  In the same case,
     1. check out the `target` commit  (exactly the same)
     2. cherry-pick commits the same, but if there is a merge conflict, abort the whole thing
     3. if all the cherry-picks succeed, create a new `topic-copy` ref at the end of the new branch
-    4. check out `topic` as before
+    4. check out `topic`, which has not moved
 
 End result: you are in exactly the same place, `topic`, which has not
 changed.  But you either got an error message (some elaboration of
@@ -225,7 +225,9 @@ for this.)
 There can be an option to allow merge resolution instead of instant failure.
 
 The error message can describe the commits that failed, if there were
-any, and mention the merge resolution option.
+any, and mention the merge resolution option.  If the user does permit
+failed merges, and there is a failure, `gi-wtf` has its work cut out
+for it.
 
 2. gi-reorder-commits
 
@@ -262,7 +264,7 @@ Same thing as above about `gi-abandon-original-branch`.
 
 This is just a wrapper around `git commit --amend`.  Replaces the head
 commit with the current index.  Maybe instead of moving the headref,
-it creates headref`-emanded` so you can compare?  This can't fail, but
+it creates headref`-emended` so you can compare?  This can't fail, but
 it could support the `gi-abandon-original-branch` semantics if we
 wanted.  It can also easily support an undo.
 
@@ -319,7 +321,7 @@ All of these are firmly in the "maybe, maybe not" file.
 
     Do it journalist style: Most important paragraph first. If
     there's more to say, end with “OK to stop here, or use `gi wtf`
-    again to continue.  Last paragraph is always ,“For complete
+    again to continue”.  Last paragraph is always “For complete
     details, see `http://gi-wtf.org/gi/blah`”.
 
 *** gi-whatnext
