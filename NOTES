@@ -5,23 +5,40 @@ Everything gi *does* is compatible with git.
 
 But it will be pedagogically simple and conceptually clear.
 
+* MOTTO
+
+“If you want git-restore-fnongulated-blastospheres, you know where to find it.”
+
+Gi doesn't have to support every possible use case, because Git already does that.
+
+Gi is not intended to replace Git.  It is intended to provide a smoother learning curve to get people to Git.
+
 * FOR EXAMPLE
 
-Maybe "git commit file" is convenient.
-But it's complex and philosophically confusing.
+Maybe `git commit file` is convenient.
+But it's internally complex and pedagogically confusing.
 So we aren't going to do it.
-"gi commit" commits THE INDEX.
-If you want "git commit file", you know where to find it.
+`gi commit` commits THE INDEX.
+If you really want "git commit file", you know where to find it.
 
 Similarly, "gi commit" is forbidden when the HEAD is detached.
-Sometimes it's useful to commit when the HEAD is detached.
-If you want to do that, you can use git-commit.
+But sometimes it's useful to commit when the HEAD is detached.
+Fine. If you want to do that, you can use git-commit.
+
+Git interactive rebase is powerful, but complex. There are a lot of
+options and it's not clear ahead of time what it will do.  For
+example, while you're learning what it is for, you _also_ have to
+learn to deal with resolving conflicted merges.
+
+We can provide several limited versions that address common individual
+use cases, thus splitting the complexity into smaller pills that can
+be swallowed one at a time.
 
 * BASIC CONCEPTS THAT WE EMPHASIZE
 
 HEAD
-  head ref
-  head commit
+  headref     -- this is the thing that doesn't exist when you have a detached head.
+  head commit -- there is always a head commit, unless you tampered with `.git/HEAD`.
 
 The index
   We commit THE INDEX.
@@ -177,10 +194,10 @@ too.
 
 *** gi-rebase
 
-There are at least two problems with rebase.  One is that it
-inevitably leads to conflicted pushes.  I don't think that can be
-fixed, and I don't think it can be hidden. As discussed above, it must
-be faced head-on.
+There are at least two problems with rebase.  One is that it almost
+inevitably leads to rejected pushes.  I don't think that can be fixed,
+and I don't think it can be hidden. As discussed above, it must be
+faced head-on.
 
 Another problem is that it seems like a scary headfirst dive into
 something complex.  We can mitigate this in a couple of ways.
@@ -268,6 +285,20 @@ it creates headref`-emended` so you can compare?  This can't fail, but
 it could support the `gi-abandon-original-branch` semantics if we
 wanted.  It can also easily support an undo.
 
+5. gi-move-branch
+
+I thought this was a good idea for a few minutes, but NO. It seems
+easy to understand, by analogy to gi-copy-branch.  But the analogy is
+wrong.  It _does not_ actually move a branch.  It makes a copy and
+discards the original.  If we have gi-move-branch, someone will move a
+branch and ask how to move it back again—which is the wrong question.
+So instead, perhaps
+
+        gi copy-branch --forget-original
+
+or some such.  It can print an instruction about how to get the
+original back.
+
 ** git commands I'm still thinking about
 
 *** git-branch
@@ -292,7 +323,29 @@ The long output from git-status is helpful to a lot of people.  But I
 think the output format could be made simpler or more useful or
 something.
 
-I wonder if gi should provide gi-s as an alias for git-status -s?
+I wonder if gi should provide gi-s as an alias for git-status -s?  Is
+status -s even important? I think maybe this is MJD personal bias
+creeping in.
+
+*** git-stash
+
+Idea: gi-stash uses the regular git stash, but instead of a pile of
+stashes, there is only one.  If you have stashed changes already, you
+may not `gi-stash` new changes.  If you need to do that, `git-stash` is still available.
+
+Is this really helpful?  It's not at all clear that people find
+multiple stashes confusing.  The idea, however, is that the stash is
+for _short-term_ storage, like when you need to temporarily clean the
+working tree so that you can rebase.
+
+Maybe the main use-case for beginners for the stash is to move
+uncommitted changes to a different branch?  In that case we could have
+
+            git-move-uncomitted-changes target
+
+that does that, by detaching HEAD, committing, attaching HEAD to
+`target`, and cherry-picking the changes.  What if the cherry-pick
+fails?
 
 *** gi-add <paths>...
 
@@ -344,6 +397,17 @@ All of these are firmly in the "maybe, maybe not" file.
     environmental changes.  Maybe it's as simple as having each undo
     command start with `cd Whatever-cwd`.
 
+*** gi-derp
+
+    This means "I don't know what is going on, or Gi said something that makes no sense."
+
+    It pops up the editor with a feedback form.
+
+    We'll unfortunately have to phase this out as Gi usage grows.  Or
+    maybe turn it into an entry into the ticketing system.
+
+    "Derp" may be offensive. Maybe find a better name.
+
 ** git commands that we will NOT pass through to gi
 
     git-reset  (what a fucking mess)
@@ -370,6 +434,4 @@ All of these are firmly in the "maybe, maybe not" file.
       was using to do the same thing.
 
       Are there other kinds of mode settings
-
-
 
