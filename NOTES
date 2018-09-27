@@ -76,6 +76,71 @@ it anyway; maybe there's some way we can clean it up.
 
 Maybe something to offer helpful advice about what to do.
 
+** Dirty working tree
+
+If the working tree is dirty, an attempt to switch branches has one of
+two effects: fail with an error message, or carry the uncommitted
+changes to the new place.  Both are confusing, and worse, it is hard
+to predict which will happen.
+
+A better behavior would be: silently commit the changes, and note in
+the commit message that this was a temporary commit of a dirty tree.
+When the user comes back to this branch, the changes are still there
+and the ref can be reset to the previous commit.
+
+I thought maybe this was similar to what Git calls `autostash`, but
+it's not.  That applies only to `rebase`.  Of course, we would want
+this to apply to `rebase` _also_.
+
+** Resolving conflicts
+
+It's really not clear how to proceed with this the first time you see
+it, and fixing it requires knowing how to look for and decipher
+conflict markers.  The frequency with which conflict markers actually
+get into the repository is witness to how tricky this is.  What can we
+do instead?  See below.
+
+How about an interactive dialogue, a bit like `git-add -p`, but more
+conversational and less deliberately obscure?  Something like:
+
+> I tried to copy your commits to the new branch, but on that branch
+> the file 'blah/blah' had already been modified in ways that seem to
+> conflict with some of your changes.  There are 2 such conflicts.
+>
+> Would you like to: (A)bort the whole copy-branch operation
+>                    (R)esolve the differences one at a time with my help
+>                    (E)xit to the shell to (E)dit the files with conflicts
+
+The (R) will start an interactive loop which presents chunks (or
+sub-chunks?) one at a time:
+
+> The file originally had:
+>
+> ...
+> 
+> and you changed it to:
+>
+> ...
+>
+> but in the meantime the branch "foo" changed it to:
+>
+> ...
+>
+> Would you like to:
+>   (K)eep your change
+>   (D)iscard your change
+>   (E)dit the file to combine the changes
+>   (A)bort the whole copy-branch operation
+
+What if the chunk is really big?  How about another prompt?
+
+> The next conflicted section of the file is 42 lines long.  Would you
+> like to:
+>
+>   (S)ee it now
+>   (D)eal with it all at once
+>   (B)reak it into 4 smaller chunks to deal with separately
+
 * COMMANDS
 
 ** gi-go <ref>
@@ -327,6 +392,8 @@ I wonder if gi should provide gi-s as an alias for git-status -s?  Is
 status -s even important? I think maybe this is MJD personal bias
 creeping in.
 
+Getting rid of the index would simplify the output quite a bit. 
+
 *** git-stash
 
 Idea: gi-stash uses the regular git stash, but instead of a pile of
@@ -346,6 +413,9 @@ uncommitted changes to a different branch?  In that case we could have
 that does that, by detaching HEAD, committing, attaching HEAD to
 `target`, and cherry-picking the changes.  What if the cherry-pick
 fails?
+
+Maybe all uses of git-stash are obviated by Dustin Boswell's idea for
+autostashing.  If so, great!
 
 *** gi-add <paths>...
 
@@ -433,7 +503,18 @@ All of these are firmly in the "maybe, maybe not" file.
       After each gi command, gi will explain which _Git_ commands it
       was using to do the same thing.
 
-      Are there other kinds of mode settings
+Are there other kinds of mode settings?  Yes!  Gi can have a
+"beginner" mode and an "intermediate" mode.  In beginner mode, menus
+are shorter and some behaviors are disabled.  (Pitfall to avoid: do
+not have behaviors _change_ when going from beginner to intermediate
+mode.)  For example, the "beginner" version of the "merge conflict"
+prompt will omit the option of exiting to the shell and dealing with
+the conflict markers.
+
+I think beginner mode omits the index.  Beginners don't need the
+index.  (This conflicts with your idea that the index is one of the
+basic concepts that we emphasize.)
+
 
 * Prior Art
 
