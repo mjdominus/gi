@@ -1,0 +1,61 @@
+Remarks and suggestions from Conor Osborne (Recurse Center Zulip,
+2018-09-29.)
+
+I looked more into easy git. I wasn't super impressed
+(https://people.gnome.org/~newren/eg/git-eg-differences.html). It's
+not changing enough and it's also focused on svn users, which i think
+should be separate. I may just have a different vision for a tool. I
+mentioned before about a "starter" version of git, but I would have a
+hard time advocating for users to learn two interfaces. A different
+porcelain would be better.
+
+I think git rebase really needs a documentation change. It's docs made
+sense to me when i realized that git must deduce 2 pieces of
+information: "the what" (the string of commits to copy), and "the
+where" (the location to copy them to). I think its shorthand is quite
+practical but its docs were hard for me to decipher. Imagining "git
+rebase is a way to transplant a string of commits". I just realized
+that maybe there should be no rebase command, maybe you should just be
+able to cherry-pick a string of commits (i think you already
+can). Cherry-picking is intuitive.
+
+I agree with your point that git rebase is a complicated command; it
+services an entire workflow with git rebase -i. Today I learned about
+stg, which is a separate tool accomplishing what git rebase -i does
+but instead using the idea of a stack of patches you can
+manipulate. So maybe a different porcelain could defer to other tools
+for -i.
+
+git diff always needs two pieces of information, git diff <tree-ish A>
+<tree-ish B>. It always shows you the diff from A to B. Where A could
+be INDEX like you said. Maybe you could also have WORKING for the
+working directory. I think that git's shorthand is not too bad, so
+maybe diff just needs a simpler man page.
+
+I completely agree with nuking git pull. I found this note I wrote to
+myself a while ago: "Why would you ever git pull? Let me fetch this
+potentially harmful shit and just throw it in with my
+code!". :laughing:
+
+An idea is to remove the terminology around branches. They're not a
+thing. There are just refs (labels) and commits, and commit ranges.
+
+I agree with the terminology issue regarding remote branches. I think
+remote branches should be considered in a separate
+namespace. Something like <branch>@<remote> (don't like how it looks
+like an email addr). Local branches after all can contain forward
+slashes.
+
+Agree with git reset being a nightmare. Conceptually I think of it as
+a way to unwind commits. Thought it's more like teleporting a
+ref. Since you can go forwards in addition to going backwards. Could
+be replaced with "gi-update-ref"
+
+I like the idea of gi-attach and gi-detach, would pair that with:
+"When you attach to a ref, the ref follows you around" or something to
+that end.
+
+I would like a porcelain to make git's primitives more obvious; that
+you're just dealing with nodes and labels on a graph. I don't think
+the primitives should be hidden. Understanding those seems to be the
+best way to using git to its fullest.
