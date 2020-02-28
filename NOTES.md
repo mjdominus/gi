@@ -259,6 +259,33 @@ But there's not way to talk about them because they don't have names!
 But we want to say that `git-fetch` copies 1 to 2, and `git-push`
 copies 3 to 1 _and_ to 2.
 
+The existing `git-push` has confusing notation for how to copy
+branches from local to remote repo.  For example, why
+
+    git push origin :topic
+
+for deleting a remote branch?
+
+Idea to think about: beginners often confuse the remote branch named
+`topic` with the local branch named `origin/topic`.  What if gi
+conflates them, so that we talk about remotes as little as possible?
+For example, instead of:
+
+* `git fetch origin topic` → `gi update origin/topic`.
+* `git push origin topic` → `gi copy-branch topic origin/topic`
+
+  (Does fetch plus rebase plus push)
+  
+* `git push origin topic:x-topic` → `gi copy-branch topic origin/x-topic`
+* `git push origin :topic` → `gi delete-branch origin/topic`
+* `git remote --remove origin` → `gi delete-branch origin/*`
+
+  (Presented only to demonstrate the analogy.  We don't actually need
+  a Gi version of `remote --remove`.)
+
+Maybe this goes beyond making things as simple as possible, into the
+realm of “too simple”.
+
 ### `gi-fetch`
 
 The difference between `git-fetch`, `git-fetch remote`, `git-fetch`
