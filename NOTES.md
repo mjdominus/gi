@@ -70,11 +70,42 @@ Instead there's some suite for copying a commit to the index, for
 copying the index to the working tree, and `gi-go` for moving HEAD to a
 new commit.
 
+(If `gi-go` is for switching branches, why do we need `gi-attach`?
+Maybe the difference is, when HEAD is detached, `gi-go` is forbidden,
+you have to use `gi-attach`?)
+
 There is always a headref unless you *explicitly* use `gi-detach`.
 
-Perhaps `gi-commit` should fail if the head is detached?  But then how
-would you get your working tree changes onto the branch where you want them?
-This is incompatible with your idea under “Dirty working tree” below.
+(Big question: Why do we need detached HEAD at all?  What is
+`gi-detach` even for?  Right now I'm coming up with nothing.  We maybe
+need some way to recover if the head somehow becomes detached.  But I
+see no reason why `gi-go` wouldn't be sufficient.)
+
+You said above that `gi-commit` should fail if the head is detached.
+Suppose you detact the head and change the working tree.  How do you
+get your changes onto the branch where you want them?
+
+You said below that attempting to switch branches with a dirty working
+tree should temporarily commit them so they can be restored when you
+come back.  But if head is detached this doesn't exactly make sense.
+I think a reasonable response would be:
+
+> You said to switch to branch `topic`, but you have uncommitted
+> changes that you would lose.  Would you like to:
+>
+> (F)orget the uncommitted changes and switch branches
+> (C)ommit the changes as a new branch and switch branches
+> (Q)uit the switch-branches operation so you can do something else
+
+(C) might prompt you for the name of the new ref, with some not-crazy
+default like `wip-Thursday-afternoon`.
+
+After (Q) you could use something like
+
+    gi branch --attach new-topic-name
+
+to name the current branch, after which `gi go` would work, silently
+saving the working tree as usual.
 
 ## Rejected PUSH
 
