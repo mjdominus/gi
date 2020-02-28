@@ -181,6 +181,33 @@ What if the chunk is really big?  How about another prompt?
 >   (B)reak it into 4 smaller chunks to deal with separately
 >   (C)ome back to this after dealing with the other conflicts
 
+## The index
+
+[Ori Dean Bernstein's translation of Git to Plan
+9](https://github.com/oridb/git9/blob/master/README) says:
+
+> the entire concept of the staging area has been dropped, as it's both confusing and clunky
+
+I can't really disagree with this; beginners often see the index as
+being just an annoying extra step between them and what they want,
+which is to commit the changes.  And the interface is definitely
+clunky.  I said below “beginners don't need the index”.
+
+I wonder, what if there were a mode in which the index was replaced
+with a separate working tree?  Then adding something to the index
+would be equivalent to copying it to the staging tree.  A commit
+operation would simply commit the contents of the staging tree.
+All the commands like `git-reset`, `git-add`, `git-diff --cached`
+disappear, or become shorthands for simple file operations.  Instead
+of `git add -p` you now just edit the index file directly, instead of
+dealing with patches.
+
+But the rest of your document seems to take for granted that the index
+is important.  Why did you think this?  Can we just get rid of it?  We
+lose `git-add -p`, which is amazingly powerful, but also hard to use.
+Perhaps more important, we lose the ability to commit only a subset of
+the changed files.
+
 # COMMANDS
 
 ## `gi-go` <ref>
