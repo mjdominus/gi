@@ -649,5 +649,38 @@ basic concepts that we emphasize.)
   Has a list of “Other similar projects”, but they are maiunly focused
   on making Git look more like SVN (barf), Mercurial, or Darcs.
 
-* [Reinventing Git interface](https://tonsky.me/blog/reinventing-git-interface/)
+* [Reinventing Git interface](https://tonsky.me/blog/reinventing-git-interface/) (2014)
+
+Prokopov and I see eye-to-eye on many issues:
+
+> basic Git concepts can be explained in a matter of half an hour _on a
+> whiteboard_, yet actually touching Git _on a computer_ takes you weeks to
+> get used to.
+
+> Git warns you _a lot_…  fact is, you cannot really destroy anything
+> by doing any “potentially dangerous” operations…
+
+> Understanding there’s no harm to be done eases things a lot.
+
+> Under the hood, working copy may be treated differently, but for a user there’s no point to be aware of that distinction.
+
+> Instead of staging changes to index, we’ll split WIP commit into two
+> WIP and STAGED, and then rename STAGED to something official.
+
+> proper UI should enable is to select, drag, copy and shuffle commits and branch pointers, including HEAD, _directly on the DAG tree_.
+
+This article's vision is much clearer than mine on some issues:
+
+* No warnings!  Just do what the user asked and provide an undo path.
+  Git's basic structure should make this easy, since the previous
+  state is still there.
+
+* Deltas are intuitive, and delta manipulation is important.  But
+  deltas are second-class citizens of Git.
+
+* We should remove any manual branch syncing stuff.
+  Always sync local branches state with remotes.
+
+I should reread Prokopov's article carefully, and then reconsider
+everything in this document to see if I have changed my mind.
 
