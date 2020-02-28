@@ -518,6 +518,15 @@ basic concepts that we emphasize.)
 
 * Prior Art
 
-https://people.gnome.org/~newren/eg/
+** [Easy Git — git for mere mortals](https://people.gnome.org/~newren/eg/)
+
+> In short, Easy GIT is a single-file wrapper script for git, designed
+> to make git easy to learn and use.
 
 To do: read this and shamelessly exploit it.
+
+Has a list of “Other similar projects”, but they are maiunly focused
+on making Git look more like SVN (barf), Mercurial, or Darcs.
+
+** [Reinventing Git interface](https://tonsky.me/blog/reinventing-git-interface/)
+
