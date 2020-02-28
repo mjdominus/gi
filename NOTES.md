@@ -1,11 +1,11 @@
 
-* PHILOSOPHY
+# PHILOSOPHY
 
 Everything gi *does* is compatible with git.
 
 But it will be pedagogically simple and conceptually clear.
 
-* MOTTO
+# MOTTO
 
 “If you want git-restore-fnongulated-blastospheres, you know where to find it.”
 
@@ -13,7 +13,7 @@ Gi doesn't have to support every possible use case, because Git already does tha
 
 Gi is not intended to replace Git.  It is intended to provide a smoother learning curve to get people to Git.
 
-* FOR EXAMPLE
+# FOR EXAMPLE
 
 Maybe `git commit file` is convenient.
 But it's internally complex and pedagogically confusing.
@@ -34,41 +34,45 @@ We can provide several limited versions that address common individual
 use cases, thus splitting the complexity into smaller pills that can
 be swallowed one at a time.
 
-* BASIC CONCEPTS THAT WE EMPHASIZE
+# BASIC CONCEPTS THAT WE EMPHASIZE
 
-HEAD
-  headref     -- this is the thing that doesn't exist when you have a detached head.
-  head commit -- there is always a head commit, unless you tampered with `.git/HEAD`.
+* HEAD
 
-The index
-  We commit THE INDEX.
-  We DO NOT commit "changes".
-  We DO NOT commit "a file".
+  * headref     -- this is the thing that doesn't exist when you have a detached head.
+  * head commit -- there is always a head commit, unless you tampered with `.git/HEAD`.
+
+* The index
+
+  * We commit THE INDEX.
+  * We DO NOT commit "changes".
+  * We DO NOT commit "a file".
 
   The terminology here is a mess:
 
-  Do not refer to the index as "the stage" or "the cache".
-  Do not refer to indexed changes as "staged" or "cached"?
-  Or if you do, pick one and stick with it!
-    Don't say "the staged changes" unless you have recently used the longer form
-    "The changes staged in the index".
+  * Do not refer to the index as "the stage" or "the cache".
+  * Do not refer to indexed changes as "staged" or "cached"?
+  * Or if you do, pick one and stick with it!
 
-Branches
-  A branch is a named commit plus all its ancestor commits.
-  Thus some branches contain others.
+  Don't say "the staged changes" unless you have recently used the longer form
+  "The changes staged in the index".
 
-* Stuff that confuses beginners:
+* Branches
 
-** Detached head
+  * A branch is a named commit plus all its ancestor commits.
+  * Thus some branches contain others.
 
-We'll fix this with explicit gi-detach and gi-attach commands.
+# Stuff that confuses beginners
+
+## Detached head
+
+We'll fix this with explicit `gi-detach` and `gi-attach` commands.
 Instead there's some suite for copying a commit to the index, for
-copying the index to the working tree, and gi-go for moving HEAD to a
+copying the index to the working tree, and `gi-go` for moving HEAD to a
 new commit.
 
-There is always a headref unless you *explicitly* use gi-detach.
+There is always a headref unless you *explicitly* use `gi-detach`.
 
-** Rejected PUSH
+## Rejected PUSH
 
 I think this is unavoidable complexity and that git's treatment of
 this is correct. Beginners will have to deal with it.  But think about
@@ -76,7 +80,7 @@ it anyway; maybe there's some way we can clean it up.
 
 Maybe something to offer helpful advice about what to do.
 
-** Dirty working tree
+## Dirty working tree
 
 If the working tree is dirty, an attempt to switch branches has one of
 two effects: fail with an error message, or carry the uncommitted
@@ -92,7 +96,7 @@ I thought maybe this was similar to what Git calls `autostash`, but
 it's not.  That applies only to `rebase`.  Of course, we would want
 this to apply to `rebase` _also_.
 
-** Resolving conflicts
+## Resolving conflicts
 
 It's really not clear how to proceed with this the first time you see
 it, and fixing it requires knowing how to look for and decipher
@@ -141,9 +145,9 @@ What if the chunk is really big?  How about another prompt?
 >   (D)eal with it all at once
 >   (B)reak it into 4 smaller chunks to deal with separately
 
-* COMMANDS
+# COMMANDS
 
-** gi-go <ref>
+## `gi-go` <ref>
 
 Attach HEAD to some other ref:
 
@@ -153,50 +157,52 @@ The commit pointed to by the old headref doesn't change.
 
 If HEAD was detached, it is attached, that's OK.
 
-** gi-detach
+## `gi-detach`
 
 Basically git-checkout HEAD~0.  Message is "HEAD detached" or "HEAD
 was already detached".
 
 Need some warning here about possible lost commits.
 
-** gi-branch <name>
+## `gi-branch` <name>
 
 Make a new ref at the current head commit.
 
--a flag attaches to the new ref.
+`-a` flag attaches to the new ref.
 
-** gi-commit
+## `gi-commit`
 
 Commits the index and moves the
 
 Forbidden when in a detached HEAD state.
 
-** gi-move <ref> <commit-ish>
+## `gi-move` <ref> <commit-ish>
 
 Moves an existing ref to a new commit.  Work could be lost.  Dangerous?
 If you do supply this, have it leave behind OLDLOC or something.
 
-** gi-checkout <ref>
+## `gi-checkout` <ref>
 
 Attaches the HEAD to the specified ref.
 Then copy the head commit to the index, then to the working directory.
 
 Forbidden if the index or working tree are dirty.
 
-** gi-discard-changes
+## `gi-discard-changes`
 
 Discards working tree changes: copies the index to the working tree.
 
 (Optional files: copy only those files?)
 
-** gi-reset-index
+Ought to support an “undo” feature somehow.
+
+## `gi-reset-index`
 
 Discards index changes: copies the head commit to the index.
 
 (Optional files: copy only those files?)
 
-** git commands that we will pass through to gi unchanged
+## git commands that we will pass through to gi unchanged
 
     gi-cherry-pick
     gi-status
@@ -206,13 +212,14 @@ Discards index changes: copies the head commit to the index.
     gi-grep
     gi-log
 
-    Most of the remote repo commands:
+Most of the remote repo commands:
+
     gi-fetch
     gi-clone
 
-** git commands where we should change the interface or the options or something
+## git commands where we should change the interface or the options or something
 
-*** gi-diff
+### `gi-diff`
 
 It's hard to guess which two things will be compared.  Try to rationalize the argmuents:
 
@@ -226,20 +233,20 @@ It's hard to guess which two things will be compared.  Try to rationalize the ar
                                          Do not multiply entities.)
 
 
-*** gi-push
+### `gi-push`
 
 I found the distinction between the ref and the remote name confusing.
 We can probably clean up the interface here.  Also get a better syntax
 for things like "localref:remoteref".  Maybe the remote is *always*
-assumed to be 'origin' unless you use a '--remote=foo' option or
+assumed to be `origin` unless you use a `--remote=foo` option or
 something.
 
 Major terminology problem: Git does not have a clear, simple piece of
 jargon for distinguishing between:
 
-    1. The ref `foo` in the remote repo
-    2. The ref `remote/foo` in the local repo
-    3. The ref `foo` in the local repo
+ 1. The ref `foo` in the remote repo
+ 2. The ref `remote/foo` in the local repo
+ 3. The ref `foo` in the local repo
 
 These are all related but different.  To understand `git-fetch` and
 `git-push` you have to understand that there are three entities here.
@@ -247,17 +254,17 @@ But there's not way to talk about them because they don't have names!
 But we want to say that `git-fetch` copies 1 to 2, and `git-push`
 copies 3 to 1 _and_ to 2.
 
-*** gi-fetch
+### `gi-fetch`
 
-The difference between 'git-fetch', 'git-fetch remote', 'git-fetch
-remote branch', and maybe 'git-fetch branch' is confusing.  What's the
+The difference between `git-fetch`, `git-fetch remote`, `git-fetch`
+remote branch', and maybe `git-fetch branch` is confusing.  What's the
 common case here?  What's the thing that beginners most need to do?
-My own common case is probably 'git-push origin HEAD'.  Maybe do that.
+My own common case is probably `git-push origin HEAD`.  Maybe do that.
 
 Whatever you do about the remote for gi-push, do the same thing here
 too.
 
-*** gi-rebase
+### `gi-rebase`
 
 There are at least two problems with rebase.  One is that it almost
 inevitably leads to rejected pushes.  I don't think that can be fixed,
@@ -267,136 +274,136 @@ faced head-on.
 Another problem is that it seems like a scary headfirst dive into
 something complex.  We can mitigate this in a couple of ways.
 
-1. gi-copy-branch
+1. `gi-copy-branch`
 
-This differs from rebase in two ways.  Suppose you have `topic` checked out.
-`git-rebase target` does the following:
+   This differs from rebase in two ways.  Suppose you have `topic` checked out.
+   `git-rebase target` does the following:
 
-    1. check out the `target` commit (not `target` itself)
-    2. cherry-pick commits from the merge-base up to `topic`, stopping to resolve conflicts
-    3. if the cherry-picks are successful, move the `topic` ref to the end of the new branch
-    4. check out `topic`.
+     1. check out the `target` commit (not `target` itself)
+     2. cherry-pick commits from the merge-base up to `topic`, stopping to resolve conflicts
+     3. if the cherry-picks are successful, move the `topic` ref to the end of the new branch
+     4. check out `topic`.
 
-If successful, it's not clear what happened to the original branch.
-Experienced git users can undo this easily with `git reset --hard
-ORIG_HEAD` or by using the reflog, but beginners are at sea.  Also,
-the jargon is worrisome.  "Rebase"?  What's that?
+   If successful, it's not clear what happened to the original branch.
+   Experienced git users can undo this easily with `git reset --hard
+   ORIG_HEAD` or by using the reflog, but beginners are at sea.  Also,
+   the jargon is worrisome.  "Rebase"?  What's that?
 
-Instead, we can provide `gi-copy-branch`.  In the same case,
-`gi-copy-branch target` does the following:
+   Instead, we can provide `gi-copy-branch`.  In the same case,
+   `gi-copy-branch target` does the following:
 
-    1. check out the `target` commit  (exactly the same)
-    2. cherry-pick commits the same, but if there is a merge conflict, abort the whole thing
-    3. if all the cherry-picks succeed, create a new `topic-copy` ref at the end of the new branch
-    4. check out `topic`, which has not moved
+     1. check out the `target` commit  (exactly the same)
+     2. cherry-pick commits the same, but if there is a merge conflict, abort the whole thing
+     3. if all the cherry-picks succeed, create a new `topic-copy` ref at the end of the new branch
+     4. check out `topic`, which has not moved
 
-End result: you are in exactly the same place, `topic`, which has not
-changed.  But you either got an error message (some elaboration of
-"couldn't copy all the commits") or else the only new thing is there
-is now a new branch, `topic-copy`, on the end of `target`, which you
-can check out or examine as usual.  If you decide you don't like it,
-you can use `gi-delete-ref topic-copy` to get rid of it.  (Note,
-delete *ref*, not delete *branch*.  The _branch_ includes all the
-commits back to the initial commit, including everything on `target`.)
+   End result: you are in exactly the same place, `topic`, which has not
+   changed.  But you either got an error message (some elaboration of
+   "couldn't copy all the commits") or else the only new thing is there
+   is now a new branch, `topic-copy`, on the end of `target`, which you
+   can check out or examine as usual.  If you decide you don't like it,
+   you can use `gi-delete-ref topic-copy` to get rid of it.  (Note,
+   delete *ref*, not delete *branch*.  The _branch_ includes all the
+   commits back to the initial commit, including everything on `target`.)
 
-(Instead of the `gi-checkout` and `gi-delete-ref` maybe a separate
-command: `gi-abandon-original-branch` or something, that moves `topic`
-to `topic-copy` and deletes the `topic-copy` ref. Find a better name
-for this.)
+   (Instead of the `gi-checkout` and `gi-delete-ref` maybe a separate
+   command: `gi-abandon-original-branch` or something, that moves `topic`
+   to `topic-copy` and deletes the `topic-copy` ref. Find a better name
+   for this.)
 
-There can be an option to allow merge resolution instead of instant failure.
+   There can be an option to allow merge resolution instead of instant failure.
 
-The error message can describe the commits that failed, if there were
-any, and mention the merge resolution option.  If the user does permit
-failed merges, and there is a failure, `gi-wtf` has its work cut out
-for it.
+   The error message can describe the commits that failed, if there were
+   any, and mention the merge resolution option.  If the user does permit
+   failed merges, and there is a failure, `gi-wtf` has its work cut out
+   for it.
 
-2. gi-reorder-commits
+2. `gi-reorder-commits`
 
-Like interactive rebase, but instead of commands, you just get a list
-of commits, and edit them into order, they are then rebased into the
-requested order.  Unless you provide the expert-level option, a failed
-cherry-pick aborts the whole thing.
+   Like interactive rebase, but instead of commands, you just get a list
+   of commits, and edit them into order, they are then rebased into the
+   requested order.  Unless you provide the expert-level option, a failed
+   cherry-pick aborts the whole thing.
 
-What are the arguments to this?  Maybe `--back-to commitish` or `-n 6`
-to reorder the last 6?  Maybe `--from commitish-A --to commitish-B`?
-No, that's no good, because we can't truly support `--to`.
+   What are the arguments to this?  Maybe `--back-to commitish` or `-n 6`
+   to reorder the last 6?  Maybe `--from commitish-A --to commitish-B`?
+   No, that's no good, because we can't truly support `--to`.
 
-Maybe the result should still be in `foo-copy` and you use
-`gi-abandon-original-branch` as with gi-copy-branch.
+   Maybe the result should still be in `foo-copy` and you use
+   `gi-abandon-original-branch` as with gi-copy-branch.
 
-3. gi-combine-commits
+3. `gi-combine-commits`
 
-(Or maybe `squash-commits`.  Do _not_ call it `merge-commits`.)
+   (Or maybe `squash-commits`.  Do _not_ call it `merge-commits`.)
 
-Like `git-rebase`'s squash option.  What is the UI?  Maybe you can just say
+   Like `git-rebase`'s squash option.  What is the UI?  Maybe you can just say
 
-      git combine-commits c1 c2 c3 ... cn
+         git combine-commits c1 c2 c3 ... cn
 
-and it does a combined reorder plus squash, invokes the editor once
-with the combined commit messages from c1...cn, and leaves everything
-else in order?  For example if you have commits 1 2 3 4 5 6 7 and you
-do `gi combine-commits 2 4 5` then you end up with 1 245 3 6 7.
+   and it does a combined reorder plus squash, invokes the editor once
+   with the combined commit messages from c1...cn, and leaves everything
+   else in order?  For example if you have commits 1 2 3 4 5 6 7 and you
+   do `gi combine-commits 2 4 5` then you end up with 1 245 3 6 7.
 
-As usual, a failed merge aborts the whole thing unless you give the special option.
+   As usual, a failed merge aborts the whole thing unless you give the special option.
 
-Same thing as above about `gi-abandon-original-branch`.
+   Same thing as above about `gi-abandon-original-branch`.
 
-4. gi-amend
+4. `gi-amend`
 
-This is just a wrapper around `git commit --amend`.  Replaces the head
-commit with the current index.  Maybe instead of moving the headref,
-it creates headref`-emended` so you can compare?  This can't fail, but
-it could support the `gi-abandon-original-branch` semantics if we
-wanted.  It can also easily support an undo.
+   This is just a wrapper around `git commit --amend`.  Replaces the head
+   commit with the current index.  Maybe instead of moving the headref,
+   it creates headref`-emended` so you can compare?  This can't fail, but
+   it could support the `gi-abandon-original-branch` semantics if we
+   wanted.  It can also easily support an undo.
 
-5. gi-move-branch
+5. `gi-move-branch`
 
-I thought this was a good idea for a few minutes, but NO. It seems
-easy to understand, by analogy to gi-copy-branch.  But the analogy is
-wrong.  It _does not_ actually move a branch.  It makes a copy and
-discards the original.  If we have gi-move-branch, someone will move a
-branch and ask how to move it back again—which is the wrong question.
-So instead, perhaps
+   I thought this was a good idea for a few minutes, but NO. It seems
+   easy to understand, by analogy to gi-copy-branch.  But the analogy is
+   wrong.  It _does not_ actually move a branch.  It makes a copy and
+   discards the original.  If we have gi-move-branch, someone will move a
+   branch and ask how to move it back again—which is the wrong question.
+   So instead, perhaps
 
-        gi copy-branch --forget-original
+           gi copy-branch --forget-original
 
-or some such.  It can print an instruction about how to get the
-original back.
+   or some such.  It can print an instruction about how to get the
+   original back.
 
-** git commands I'm still thinking about
+## git commands I'm still thinking about
 
-*** git-branch
+### `git-branch`
 
--m is confusing. It looks like it moves branches, but it moves refs.
-Maybe call it gi-move-ref or something.  This is a basic command that
-git lacks; the interface on git-update-ref is horrendous.
+`-m` is confusing. It looks like it moves branches, but it moves refs.
+Maybe call it `gi-move-ref` or something.  This is a basic command that
+git lacks; the interface on `git-update-ref` is horrendous.
 
-*** git-mv
+### `git-mv`
 
-*** git-rm
+### `git-rm`
 
-*** git-show
+### `git-show`
 
 The idea is sound, but I think we can do better here.  But isn't 99%
 of the use-case to just do git-log -1?  If so, git-show is probably
 okay.
 
-*** git-status
+### `git-status`
 
-The long output from git-status is helpful to a lot of people.  But I
+The long output from `git-status` is helpful to a lot of people.  But I
 think the output format could be made simpler or more useful or
 something.
 
-I wonder if gi should provide gi-s as an alias for git-status -s?  Is
-status -s even important? I think maybe this is MJD personal bias
+I wonder if gi should provide `gi-s` as an alias for `git-status -s`?  Is
+`status -s` even important? I think maybe this is MJD personal bias
 creeping in.
 
 Getting rid of the index would simplify the output quite a bit. 
 
-*** git-stash
+### `git-stash`
 
-Idea: gi-stash uses the regular git stash, but instead of a pile of
+Idea: `gi-stash` uses the regular git stash, but instead of a pile of
 stashes, there is only one.  If you have stashed changes already, you
 may not `gi-stash` new changes.  If you need to do that, `git-stash` is still available.
 
@@ -408,100 +415,114 @@ working tree so that you can rebase.
 Maybe the main use-case for beginners for the stash is to move
 uncommitted changes to a different branch?  In that case we could have
 
-            git-move-uncomitted-changes target
+            gi-move-uncomitted-changes target
 
 that does that, by detaching HEAD, committing, attaching HEAD to
 `target`, and cherry-picking the changes.  What if the cherry-pick
 fails?
 
-Maybe all uses of git-stash are obviated by Dustin Boswell's idea for
+Maybe all uses of `git-stash` are obviated by Dustin Boswell's idea for
 autostashing.  If so, great!
 
-*** gi-add <paths>...
+Note: Dustin's idea was that if you try to switch branches with a
+dirty working tree, instead of complaining, Git should just save the
+state of the working tree, and restore it when you come back to the
+branch.
 
-Copies files from the working tree to the index, like git-add.  We
-support -u also.
+### `gi-add` <paths>...
 
-Beginners are confused by this.  Separate gi-add, for adding *new*
-files, from gi-stage, for copying changes to the index.  Does gi-add
-imply gi-stage, or is it like git-add -N?  Probably avoid git-add -N
+Copies files from the working tree to the index, like `git-add`.  We
+support `-u` also.
+
+Beginners are confused by this.  Maybe eparate `gi-add`, for adding *new*
+files, from `gi-stage`, for copying changes to the index.  Does `gi-add`
+imply `gi-stage`, or is it like `git-add -N`?  Probably avoid `git-add -N`
 since it's still a little bit weird and unfinished.
 
-Calling this "gi-stage" violates the commandment above about confusing
-index/stage/cache terminology.  Maybe gi-index instead?  I like this;
-it makes clear that gi-reset-index is the opposite of gi-index.
+Calling this `gi-stage` violates the commandment above about confusing
+index/stage/cache terminology.  Maybe `gi-index` instead?  I like this;
+it makes clear that `gi-reset-index` is the opposite of `gi-index`.
 
-** Totally new commands
+## Totally new commands
 
 All of these are firmly in the "maybe, maybe not" file.
 
-*** Something to display the topology of the commit history without
-    the details.  It elides sequences of commits that are straight lines.
+### `gi-???`
 
-*** gi-wtf
+Something to display the topology of the commit history without
+the details.  It elides sequences of commits that are straight lines.
 
-    Print a more detailed explanation of the previous error/warning.
+### `gi-wtf`
 
-    Do it journalist style: Most important paragraph first. If
-    there's more to say, end with “OK to stop here, or use `gi wtf`
-    again to continue”.  Last paragraph is always “For complete
-    details, see `http://gi-wtf.org/gi/blah`”.
+Print a more detailed explanation of the previous error/warning.
 
-*** gi-whatnext
+Do it journalist style: Most important paragraph first. If
+there's more to say, end with “OK to stop here, or use `gi wtf`
+again to continue”.  Last paragraph is always “For complete
+details, see `http://gi-wtf.org/gi/blah`”.
 
-    Suggestion for what to do next?  If the index is conflicted,
-    suggest `gi-reset-index` or editing the files followed by `gi-index`.
+### `gi-whatnext`
 
-    Samer Masterson suggests: “reminds me of (Emacs) `vc-next-action`, which
-    simply does the next thing instead of asking”.  Look into this.
+Suggestion for what to do next?  If the index is conflicted,
+suggest `gi-reset-index` or editing the files followed by `gi-index`.
 
-*** gi-undo
+Samer Masterson suggests: “reminds me of (Emacs) `vc-next-action`, which
+simply does the next thing instead of asking”.  Look into this.
 
-    Each gi command can write a history file that includes a command
-    that will perfectly roll back its changes.  `gi-undo` can execute
-    the rollback.  This would also allow `gi-history` which describes
-    just your `gi` commands without all the intervening `ls`es and
-    such.
+### `gi-undo`
 
-    Potential difficulty: Changing working directory and other
-    environmental changes.  Maybe it's as simple as having each undo
-    command start with `cd Whatever-cwd`.
+Each gi command can write a history file that includes a command
+that will perfectly roll back its changes.  `gi-undo` can execute
+the rollback.  This would also allow `gi-history` which describes
+just your `gi` commands without all the intervening `ls`es and
+such.
 
-*** gi-derp
+Potential difficulty: Changing working directory and other
+environmental changes.  Maybe it's as simple as having each undo
+command start with `cd Whatever-cwd`.
 
-    This means "I don't know what is going on, or Gi said something that makes no sense."
+### `gi-derp`
 
-    It pops up the editor with a feedback form.
+This means "I don't know what is going on, or Gi said something that makes no sense."
 
-    We'll unfortunately have to phase this out as Gi usage grows.  Or
-    maybe turn it into an entry into the ticketing system.
+It pops up the editor with a feedback form.
 
-    "Derp" may be offensive. Maybe find a better name.
+We'll unfortunately have to phase this out as Gi usage grows.  Or
+maybe turn it into an entry into the ticketing system.
 
-** git commands that we will NOT pass through to gi
+"Derp" may be offensive. Maybe find a better name.
 
-    git-reset  (what a fucking mess)
-      Instead we have gi-discard-changes, gi-reset-index, and gi-go.
+## git commands that we will NOT pass through to gi
 
-    git-pull Use gi-fetch plus gi-merge.  Have a gi-pull comand that
-      prints out a message that tells you to do that. (“Sorry, the
-      opposite of `push` is unfortunately `fetch`.”)
+### `git-reset`  (what a fucking mess)
 
-    git-init
-      Emphasizes that gi is not a different thing than git, but that
-      gi is a different way to manipulate *git* repositories.  To make
-      a repo, you use git-init, because you are making a *git* repo,
-      not some different thing that is called a gi repo.
+Instead we have gi-discard-changes, gi-reset-index, and gi-go.
 
-    git-tag
-      Advanced users only.
+### `git-pull`
 
-* Other features:
+Use `gi-fetch` plus `gi-merge`.  Have a `gi-pull` comand that
+prints out a message that tells you to do that. (“Sorry, the
+opposite of `push` is unfortunately `fetch`.”)
 
-    gi mode explain-git-commands
+### `git-init`
 
-      After each gi command, gi will explain which _Git_ commands it
-      was using to do the same thing.
+Emphasizes that gi is not a different thing than git, but that
+gi is a different way to manipulate *git* repositories.  To make
+a repo, you use git-init, because you are making a *git* repo,
+not some different thing that is called a gi repo.
+
+### `git-tag`
+
+Advanced users only.
+
+# Other features:
+
+## `gi mode explain-git-commands`
+
+After each gi command, gi will explain which _Git_ commands it
+was using to do the same thing.
+
+## Other modes?
 
 Are there other kinds of mode settings?  Yes!  Gi can have a
 "beginner" mode and an "intermediate" mode.  In beginner mode, menus
@@ -516,17 +537,17 @@ index.  (This conflicts with your idea that the index is one of the
 basic concepts that we emphasize.)
 
 
-* Prior Art
+# Prior Art
 
-** [Easy Git — git for mere mortals](https://people.gnome.org/~newren/eg/)
+* [Easy Git — git for mere mortals](https://people.gnome.org/~newren/eg/)
 
-> In short, Easy GIT is a single-file wrapper script for git, designed
-> to make git easy to learn and use.
+  > In short, Easy GIT is a single-file wrapper script for git, designed
+  > to make git easy to learn and use.
 
-To do: read this and shamelessly exploit it.
+  To do: read this and shamelessly exploit it.
 
-Has a list of “Other similar projects”, but they are maiunly focused
-on making Git look more like SVN (barf), Mercurial, or Darcs.
+  Has a list of “Other similar projects”, but they are maiunly focused
+  on making Git look more like SVN (barf), Mercurial, or Darcs.
 
-** [Reinventing Git interface](https://tonsky.me/blog/reinventing-git-interface/)
+* [Reinventing Git interface](https://tonsky.me/blog/reinventing-git-interface/)
 
