@@ -452,6 +452,16 @@ All of these are firmly in the "maybe, maybe not" file.
 Something to display the topology of the commit history without
 the details.  It elides sequences of commits that are straight lines.
 
+I desperately wanted this when I was a beginner, and I still want it
+frequently, although I've gotten used to not having it.  Maybe this is
+MJD bias again?
+
+Maybe package it up with something like your current `git-vee`?  They
+make sense separately and in conjunction.  I still don't know how
+anyone survives day-to-day without `git-vee`.
+
+“`gi-map`” maybe?
+
 ### `gi-wtf`
 
 Print a more detailed explanation of the previous error/warning.
