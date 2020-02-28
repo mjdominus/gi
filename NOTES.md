@@ -7,7 +7,7 @@ But it will be pedagogically simple and conceptually clear.
 
 # MOTTO
 
-“If you want git-restore-fnongulated-blastospheres, you know where to find it.”
+“If you want git-restore-spatulated-blastospheres, you know where to find it.”
 
 Gi doesn't have to support every possible use case, because Git already does that.
 
@@ -72,9 +72,13 @@ new commit.
 
 There is always a headref unless you *explicitly* use `gi-detach`.
 
+Perhaps `gi-commit` should fail if the head is detached?  But then how
+would you get your working tree changes onto the branch where you want them?
+This is incompatible with your idea under “Dirty working tree” below.
+
 ## Rejected PUSH
 
-I think this is unavoidable complexity and that git's treatment of
+I think this is *unavoidable complexity* and that git's treatment of
 this is correct. Beginners will have to deal with it.  But think about
 it anyway; maybe there's some way we can clean it up.
 
@@ -98,7 +102,7 @@ this to apply to `rebase` _also_.
 
 ## Resolving conflicts
 
-It's really not clear how to proceed with this the first time you see
+It's really not clear how to proceed with this the first time one sees
 it, and fixing it requires knowing how to look for and decipher
 conflict markers.  The frequency with which conflict markers actually
 get into the repository is witness to how tricky this is.  What can we
@@ -141,9 +145,10 @@ What if the chunk is really big?  How about another prompt?
 > The next conflicted section of the file is 42 lines long.  Would you
 > like to:
 >
->   (S)ee it now
+>   (S)ee it now and have me ask you again
 >   (D)eal with it all at once
 >   (B)reak it into 4 smaller chunks to deal with separately
+>   (C)ome back to this after dealing with the other conflicts
 
 # COMMANDS
 
@@ -427,7 +432,8 @@ autostashing.  If so, great!
 Note: Dustin's idea was that if you try to switch branches with a
 dirty working tree, instead of complaining, Git should just save the
 state of the working tree, and restore it when you come back to the
-branch.
+branch.  (This is pretty much what you described above under “Dirty
+working tree”.)
 
 ### `gi-add` <paths>...
 
@@ -545,7 +551,6 @@ the conflict markers.
 I think beginner mode omits the index.  Beginners don't need the
 index.  (This conflicts with your idea that the index is one of the
 basic concepts that we emphasize.)
-
 
 # Prior Art
 
