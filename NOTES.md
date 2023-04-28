@@ -639,7 +639,7 @@ basic concepts that we emphasize.)
 
 # Prior Art
 
-* [Easy Git — git for mere mortals](https://people.gnome.org/~newren/eg/)
+## [Easy Git — git for mere mortals](https://people.gnome.org/~newren/eg/)
 
   > In short, Easy GIT is a single-file wrapper script for git, designed
   > to make git easy to learn and use.
@@ -649,7 +649,7 @@ basic concepts that we emphasize.)
   Has a list of “Other similar projects”, but they are maiunly focused
   on making Git look more like SVN (barf), Mercurial, or Darcs.
 
-* [Reinventing Git interface](https://tonsky.me/blog/reinventing-git-interface/) (2014)
+## [Reinventing Git interface](https://tonsky.me/blog/reinventing-git-interface/) (2014)
 
 Prokopov and I see eye-to-eye on many issues:
 
@@ -684,3 +684,16 @@ This article's vision is much clearer than mine on some issues:
 I should reread Prokopov's article carefully, and then reconsider
 everything in this document to see if I have changed my mind.
 
+## [Jujitsu](https://github.com/martinvonz/jj)
+
+> Jujutsu is a Git-compatible DVCS. It combines features from Git
+> (data model, speed), Mercurial (anonymous branching, simple CLI free
+> from "the index", revsets, powerful history-rewriting), and
+> Pijul/Darcs (first-class conflicts), with features not found in most
+> of them (working-copy-as-a-commit, undo functionality, automatic
+> rebase, safe replication via rsync, Dropbox, or distributed file
+> system).
+>
+> The command-line tool is called `jj` for now because it's easy to
+> type and easy to replace (rare in English). The project is called
+> "Jujutsu" because it matches "jj".
